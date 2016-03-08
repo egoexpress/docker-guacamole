@@ -1,0 +1,27 @@
+vncserver:
+  container_name: vncserver
+  image: kaixhin/vnc
+  restart: on-failure:10
+
+guacamole-guacd:
+  container_name: guacamole-guacd
+  image: mattgruter/guacamole-guacd
+  restart: on-failure:10
+  links:
+    - "vncserver:vncserver"
+
+guacamole-db:
+  container_name: guacamole-db
+  image: mattgruter/guacamole-db
+  restart: on-failure:10
+
+guacamole-web:
+  container_name: guacamole-web
+  image: mattgruter/guacamole-webserver
+  restart: on-failure:10
+  links:
+    - "vncserver:vncserver"
+    - "guacamole-db:db"
+    - "guacamole-guacd:guacd"
+  environment:
+    - VIRTUAL_HOST=${DOCKER_GUACAMOLE_HOST}
